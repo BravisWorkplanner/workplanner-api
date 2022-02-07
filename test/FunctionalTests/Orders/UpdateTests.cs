@@ -46,7 +46,9 @@ namespace FunctionalTests.Orders
 
             var orderId = await response.Content.ReadFromJsonAsync<int>();
 
-            var order = await httpClient.GetFromJsonAsync<OrderGetResult>($"api/v1/orders/{orderId}", CancellationToken.None);
+            var order = await httpClient.GetFromJsonAsync<OrderGetResult>(
+                $"api/v1/orders/{orderId}",
+                CancellationToken.None);
             Assert.NotNull(order);
 
             Assert.Equal(updateOrderRequest.OrderId, order.OrderId);
@@ -82,7 +84,7 @@ namespace FunctionalTests.Orders
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(3),
                 InvoiceDate = DateTime.UtcNow.AddDays(5),
-                OrderStatus = (OrderStatus) new Random().Next(0, Enum.GetValues(typeof(OrderStatus)).Length - 1),
+                OrderStatus = (OrderStatus)new Random().Next(0, Enum.GetValues(typeof(OrderStatus)).Length - 1),
             };
         }
     }

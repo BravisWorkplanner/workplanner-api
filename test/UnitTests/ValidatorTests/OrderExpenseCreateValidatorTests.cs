@@ -10,7 +10,7 @@ namespace UnitTests.ValidatorTests
         {
             // arrange
             var sut = new OrderExpenseCreateValidator();
-            var order = new OrderExpenseCreateRequest() {WorkerId = 1, Price = double.MaxValue};
+            var order = new OrderExpenseCreateRequest() { WorkerId = 1, Price = double.MaxValue };
 
             // act
             var result = sut.Validate(order);
@@ -24,7 +24,7 @@ namespace UnitTests.ValidatorTests
         {
             // arrange
             var sut = new OrderExpenseCreateValidator();
-            var order = new OrderExpenseCreateRequest() {OrderId = 1, Price = double.MaxValue};
+            var order = new OrderExpenseCreateRequest() { OrderId = 1, Price = double.MaxValue };
 
             // act
             var result = sut.Validate(order);
@@ -38,7 +38,7 @@ namespace UnitTests.ValidatorTests
         {
             // arrange
             var sut = new OrderExpenseCreateValidator();
-            var order = new OrderExpenseCreateRequest() {OrderId = 1, WorkerId = 2};
+            var order = new OrderExpenseCreateRequest() { OrderId = 1, WorkerId = 2 };
 
             // act
             var result = sut.Validate(order);
@@ -52,7 +52,7 @@ namespace UnitTests.ValidatorTests
         {
             // arrange
             var sut = new OrderExpenseCreateValidator();
-            var order = new OrderExpenseCreateRequest() {OrderId = 1, WorkerId = 2, Price = double.MaxValue};
+            var order = new OrderExpenseCreateRequest() { OrderId = 1, WorkerId = 2, Price = double.MaxValue };
 
             // act
             var result = sut.Validate(order);
@@ -69,7 +69,7 @@ namespace UnitTests.ValidatorTests
         {
             // arrange
             var sut = new OrderExpenseUpdateValidator();
-            var order = new OrderExpenseUpdateRequest
+            var order = new ExpenseUpdateRequest
             {
                 Price = double.MaxValue,
             };

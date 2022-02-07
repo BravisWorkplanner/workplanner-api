@@ -1,10 +1,9 @@
 ﻿using API.V1.Features.Workers.Request;
 using APIEndpoints;
-using AutoMapper;
-using Domain;
-using Domain.Contracts;
 using Domain.Entities;
+using Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
@@ -15,14 +14,12 @@ namespace API.V1.Features.Workers
 {
     public class Create : BaseAsyncEndpoint.WithRequest<WorkerCreateRequest>.WithResponse<int>
     {
-        private readonly IAsyncRepository<Worker> _repository;
-        private readonly IMapper _mapper;
+        private readonly AppDbContext _db;
         private readonly ILogger _logger;
 
-        public Create(IAsyncRepository<Worker> repository, IMapper mapper, ILoggerFactory loggerFactory)
+        public Create(AppDbContext db, ILoggerFactory loggerFactory)
         {
-            _repository = repository;
-            _mapper = mapper;
+            _db = db;
             _logger = loggerFactory.CreateLogger<Create>();
         }
 
@@ -31,20 +28,25 @@ namespace API.V1.Features.Workers
             Summary = "Create a new worker",
             Description = "Create a new worker",
             OperationId = "Worker.Create",
-            Tags = new[] {"Workers"})]
-        [ProducesResponseType(typeof(int), (int) HttpStatusCode.Created)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+            Tags = new[] { "Workers" })]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public override async Task<ActionResult<int>> HandleAsync(
             [FromBody] WorkerCreateRequest request,
             CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation(LogEvents.WorkerCreateEvent, "Creating new worker");
+            var worker = new Worker
+            {
+                Name = request.Name,
+                PhoneNumber = request.PhoneNumber,
+                Company = request.Company,
+            };
 
-            var worker = _mapper.Map<Worker>(request);
+            _db.Entry(worker).State = EntityState.Added;
 
-            var result = await _repository.AddAsync(worker, cancellationToken);
+            await _db.SaveChangesAsync(cancellationToken);
 
-            return CreatedAtRoute("GetWorker", new {id = result.Id}, result);
+            return Ok(worker.Id);
         }
     }
 }

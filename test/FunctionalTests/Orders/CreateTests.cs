@@ -28,13 +28,10 @@ namespace FunctionalTests.Orders
             // arrange
             var createdOrder = new OrderCreateRequest()
             {
-                ObjectNumber = $"B-{_testFixture.NextCourseNumber()}",
+                CustomerPhoneNumber = Faker.Phone.Number(),
                 Address = Faker.Address.StreetAddress(),
                 Description = Faker.Lorem.Sentence(),
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(3),
-                InvoiceDate = DateTime.UtcNow.AddDays(5),
-                OrderStatus = OrderStatus.OnGoing,
+                CustomerName = Faker.Company.Name(),
             };
             var httpClient = _testFixture.Factory.CreateClient();
             var httpContent = new StringContent(JsonSerializer.Serialize(createdOrder), Encoding.UTF8, "application/json");
@@ -52,13 +49,10 @@ namespace FunctionalTests.Orders
             // arrange
             var createdOrder = new OrderCreateRequest()
             {
-                ObjectNumber = $"B-{_testFixture.NextCourseNumber()}",
+                CustomerPhoneNumber = Faker.Phone.Number(),
                 Address = Faker.Address.StreetAddress(),
                 Description = Faker.Lorem.Sentence(),
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(3),
-                InvoiceDate = DateTime.UtcNow.AddDays(5),
-                OrderStatus = OrderStatus.OnGoing,
+                CustomerName = Faker.Company.Name(),
             };
             var httpClient = _testFixture.Factory.CreateClient();
             var httpContent = new StringContent(JsonSerializer.Serialize(createdOrder), Encoding.UTF8, "application/json");
@@ -77,11 +71,8 @@ namespace FunctionalTests.Orders
 
             Assert.Equal(getOrder.Address, createdOrder.Address);
             Assert.Equal(getOrder.Description, createdOrder.Description);
-            Assert.Equal(getOrder.ObjectNumber, createdOrder.ObjectNumber);
-            Assert.Equal(getOrder.StartDate, createdOrder.StartDate);
-            Assert.Equal(getOrder.EndDate, createdOrder.EndDate);
-            Assert.Equal(getOrder.InvoiceDate, createdOrder.InvoiceDate);
-            Assert.Equal(getOrder.OrderStatus, createdOrder.OrderStatus);
+            Assert.Equal(getOrder.CustomerName, createdOrder.CustomerName);
+            Assert.Equal(getOrder.CustomerPhoneNumber, createdOrder.CustomerPhoneNumber);
         }
 
         [Fact]

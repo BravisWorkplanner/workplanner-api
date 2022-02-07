@@ -24,7 +24,7 @@ namespace UnitTests.ValidatorTests
         {
             // arrange
             var sut = new OrderUpdateValidator();
-            var order = new OrderUpdateRequest {OrderId = 5};
+            var order = new OrderUpdateRequest { OrderId = 5 };
 
             // act
             var result = sut.Validate(order);

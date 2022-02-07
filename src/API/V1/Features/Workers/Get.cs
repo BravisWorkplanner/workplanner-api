@@ -1,9 +1,8 @@
 ﻿using API.V1.Features.Workers.Response;
 using APIEndpoints;
-using AutoMapper;
 using Domain;
-using Domain.Contracts;
 using Domain.Entities;
+using Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -15,34 +14,45 @@ namespace API.V1.Features.Workers
 {
     public class Get : BaseAsyncEndpoint.WithRequest<int>.WithResponse<WorkerGetResult>
     {
-        private readonly IAsyncRepository<Worker> _repository;
-        private readonly IMapper _mapper;
+        private readonly AppDbContext _db;
         private readonly ILogger _logger;
 
-        public Get(IAsyncRepository<Worker> repository, IMapper mapper, ILoggerFactory loggerFactory)
+        public Get(AppDbContext db, ILoggerFactory factory)
         {
-            _repository = repository;
-            _mapper = mapper;
-            _logger = loggerFactory.CreateLogger<Get>();
+            _db = db;
+            _logger = factory.CreateLogger<Get>();
         }
 
-        [HttpGet("api/v1/workers/{id}", Name = "GetWorker")]
-        [SwaggerOperation(Summary = "Gets a worker by id", Description = "Gets a worker by id", OperationId = "Worker.Get", Tags = new[] {"Workers"})]
-        [ProducesResponseType(typeof(WorkerGetResult), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(int), (int) HttpStatusCode.NotFound)]
-        public override async Task<ActionResult<WorkerGetResult>> HandleAsync([FromRoute] int id, CancellationToken cancellationToken = default)
-        {
-            _logger.LogInformation(LogEvents.WorkerGetEvent, "Getting worker with id {WorkerId}", id);
 
-            var worker = await _repository.GetByIdAsync(id, cancellationToken);
+        [HttpGet("api/v1/workers/{id}", Name = "GetWorker")]
+        [SwaggerOperation(
+            Summary = "Gets a worker by id",
+            Description = "Gets a worker by id",
+            OperationId = "Worker.Get",
+            Tags = new[] { "Workers" })]
+        [ProducesResponseType(typeof(WorkerGetResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.NotFound)]
+        public override async Task<ActionResult<WorkerGetResult>> HandleAsync(
+            [FromRoute] int id,
+            CancellationToken cancellationToken = default)
+        {
+            var worker = await _db.FindAsync<Worker>(new object[] { id }, cancellationToken: cancellationToken);
             if (worker == null)
             {
-                _logger.LogWarning(LogEvents.WorkerNotFoundEvent, "Worker with id {WorkerId} was not found", id);
+                _logger.LogWarning(LogEvents.WorkerNotFoundEvent, "Order with id {OrderId} was not found", id);
 
                 return NotFound(id);
             }
 
-            return Ok(_mapper.Map<WorkerGetResult>(worker));
+            var result = new WorkerGetResult
+            {
+                WorkerId = worker.Id,
+                Company = worker.Company,
+                Name = worker.Name,
+                PhoneNumber = worker.PhoneNumber,
+            };
+
+            return Ok(result);
         }
     }
 }

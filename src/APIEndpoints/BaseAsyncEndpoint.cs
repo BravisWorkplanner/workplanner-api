@@ -15,12 +15,16 @@ namespace APIEndpoints
         {
             public abstract class WithResponse<TResponse> : BaseEndpointAsync
             {
-                public abstract Task<ActionResult<TResponse>> HandleAsync(TRequest request, CancellationToken cancellationToken = default);
+                public abstract Task<ActionResult<TResponse>> HandleAsync(
+                    TRequest request,
+                    CancellationToken cancellationToken = default);
             }
 
             public abstract class WithoutResponse : BaseEndpointAsync
             {
-                public abstract Task<ActionResult> HandleAsync(TRequest request, CancellationToken cancellationToken = default);
+                public abstract Task<ActionResult> HandleAsync(
+                    TRequest request,
+                    CancellationToken cancellationToken = default);
             }
         }
 

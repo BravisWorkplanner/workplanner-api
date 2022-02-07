@@ -19,6 +19,12 @@ namespace API.V1.Features.Orders.Response
         [JsonPropertyName("address")]
         public string Address { get; set; }
 
+        [JsonPropertyName("customerName")]
+        public string CustomerName { get; set; }
+
+        [JsonPropertyName("customerPhoneNumber")]
+        public string CustomerPhoneNumber { get; set; }
+
         [JsonPropertyName("startDate")]
         public DateTime? StartDate { get; set; }
 

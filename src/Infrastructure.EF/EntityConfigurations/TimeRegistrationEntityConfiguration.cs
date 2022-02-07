@@ -8,20 +8,13 @@ namespace Infrastructure.EF.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<TimeRegistration> builder)
         {
-            builder
-                .ToTable("TimeRegistrations");
+            builder.ToTable("TimeRegistrations");
 
-            builder
-                .HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            builder
-                .Property(x => x.Id)
-                .HasColumnName("TimeRegistrationId");
+            builder.Property(x => x.Id).HasColumnName("TimeRegistrationId");
 
-            builder
-                .HasOne(x => x.Order)
-                .WithMany(x => x.TimeRegistrations)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.Order).WithMany(x => x.TimeRegistrations).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
