@@ -7,7 +7,24 @@ namespace Domain.Entities
 {
     public class Order : BaseEntity
     {
-        public string ObjectNumber { get; set; }
+        // TODO: Temporary solution since sql lite does not support sequences
+        public string ObjectNumber
+        {
+            get
+            {
+                if (Id < 10)
+                {
+                    return $"B-00{Id}";
+                }
+
+                if (Id > 9 && Id < 99)
+                {
+                    return $"B-0{Id}";
+                }
+
+                return $"B-{Id}";
+            }
+        }
 
         public string Description { get; set; }
 
@@ -20,6 +37,10 @@ namespace Domain.Entities
         public DateTime? InvoiceDate { get; set; }
 
         public OrderStatus OrderStatus { get; set; }
+
+        public string CustomerName { get; set; }
+
+        public string CustomerPhoneNumber { get; set; }
 
         public ICollection<Expense> Expenses { get; set; }
 

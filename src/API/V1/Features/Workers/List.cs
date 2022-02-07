@@ -1,12 +1,9 @@
-﻿using API.V1.Features.Orders.Response;
-using API.V1.Features.Workers.Request;
+﻿using API.V1.Features.Workers.Request;
 using API.V1.Features.Workers.Response;
 using APIEndpoints;
-using AutoMapper;
-using Domain;
-using Domain.Contracts;
-using Domain.Entities;
+using Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -19,29 +16,40 @@ namespace API.V1.Features.Workers
 {
     public class List : BaseAsyncEndpoint.WithRequest<WorkerListPageRequest>.WithResponse<List<WorkerListResult>>
     {
-        private readonly IAsyncRepository<Worker> _repository;
-        private readonly IMapper _mapper;
+        private readonly AppDbContext _db;
         private readonly ILogger _logger;
 
-        public List(IAsyncRepository<Worker> repository, IMapper mapper, ILoggerFactory loggerFactory)
+        public List(AppDbContext db, ILoggerFactory factory)
         {
-            _repository = repository;
-            _mapper = mapper;
-            _logger = loggerFactory.CreateLogger<List>();
+            _db = db;
+            _logger = factory.CreateLogger<List>();
         }
 
         [HttpGet("api/v1/workers", Name = "GetWorkerList")]
-        [SwaggerOperation(Summary = "Gets a list of workers", Description = "List of workers", OperationId = "Worker.List", Tags = new[] {"Workers"})]
-        [ProducesResponseType(typeof(List<WorkerListResult>), (int) HttpStatusCode.OK)]
+        [SwaggerOperation(
+            Summary = "Gets a list of workers",
+            Description = "List of workers",
+            OperationId = "Worker.List",
+            Tags = new[] { "Workers" })]
+        [ProducesResponseType(typeof(List<WorkerListResult>), (int)HttpStatusCode.OK)]
         public override async Task<ActionResult<List<WorkerListResult>>> HandleAsync(
             [FromQuery] WorkerListPageRequest request,
             CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation(LogEvents.WorkerGetListEvent, "Getting list of workers");
+            var result = await _db.Workers.OrderByDescending(x => x.Id).
+                                   Skip(request.PerPage * (request.Page - 1)).
+                                   Take(request.PerPage).
+                                   Select(
+                                       x => new WorkerListResult
+                                       {
+                                           WorkerId = x.Id,
+                                           PhoneNumber = x.PhoneNumber,
+                                           Company = x.Company,
+                                           Name = x.Name,
+                                       }).
+                                   ToListAsync(cancellationToken);
 
-            var workerList = await _repository.ListAllAsync(request.PerPage, request.Page, cancellationToken: cancellationToken);
-
-            return Ok(workerList.Select(x => _mapper.Map<WorkerListResult>(x)));
+            return Ok(result);
         }
     }
 }

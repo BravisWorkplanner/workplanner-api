@@ -9,8 +9,8 @@ namespace APIEndpoints
     [ApiController]
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType((int) HttpStatusCode.UnsupportedMediaType)]
-    [ProducesResponseType((int) HttpStatusCode.InternalServerError)]
+    [ProducesResponseType((int)HttpStatusCode.UnsupportedMediaType)]
+    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     public abstract class BaseEndpointAsync : ControllerBase
     {
     }

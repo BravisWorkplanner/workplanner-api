@@ -3,23 +3,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.V1.Features.Expenses.Requests;
 using APIEndpoints;
-using AutoMapper;
-using Domain.Contracts;
 using Domain.Entities;
+using Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.V1.Features.Expenses
 {
     public class Create : BaseAsyncEndpoint.WithRequest<OrderExpenseCreateRequest>.WithResponse<int>
     {
-        private readonly IAsyncRepository<Expense> _repository;
-        private readonly IMapper _mapper;
+        private readonly AppDbContext _db;
 
-        public Create(IAsyncRepository<Expense> repository, IMapper mapper)
+        public Create(AppDbContext db)
         {
-            _repository = repository;
-            _mapper = mapper;
+            _db = db;
         }
 
         [HttpPost("api/v1/expense", Name = "CreateExpense")]
@@ -27,16 +25,28 @@ namespace API.V1.Features.Expenses
             Summary = "Create a new Expense",
             Description = "Create a new Expense",
             OperationId = "Expense.Create",
-            Tags = new[] {"Expenses"})]
-        [ProducesResponseType(typeof(int), (int) HttpStatusCode.Created)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public override async Task<ActionResult<int>> HandleAsync(OrderExpenseCreateRequest request, CancellationToken cancellationToken = default)
+            Tags = new[] { "Expenses" })]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public override async Task<ActionResult<int>> HandleAsync(
+            [FromBody] OrderExpenseCreateRequest request,
+            CancellationToken cancellationToken = default)
         {
-            var expense = _mapper.Map<Expense>(request);
+            var expense = new Expense
+            {
+                OrderId = request.OrderId,
+                WorkerId = request.WorkerId,
+                Price = request.Price,
+                Description = request.Description,
+                ProductId = request.ProductId,
+                InvoiceId = request.InvoiceId,
+            };
 
-            var result = await _repository.AddAsync(expense, cancellationToken);
+            _db.Entry(expense).State = EntityState.Added;
 
-            return result.Id;
+            await _db.SaveChangesAsync(cancellationToken);
+
+            return Ok(expense.Id);
         }
     }
 }

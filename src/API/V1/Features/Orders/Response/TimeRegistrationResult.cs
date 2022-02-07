@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using Domain.Entities;
 
 namespace API.V1.Features.Orders.Response
 {
@@ -9,16 +8,19 @@ namespace API.V1.Features.Orders.Response
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonPropertyName("dateTime")]
-        public DateTime DateTime { get; set; }
+        [JsonPropertyName("Day")]
+        public DateTime Day { get; set; }
 
         [JsonPropertyName("week")]
         public string Week { get; set; }
 
         [JsonPropertyName("worker")]
-        public Worker Worker { get; set; }
+        public string Worker { get; set; }
 
         [JsonPropertyName("hours")]
         public double Hours { get; set; }
+
+        [JsonPropertyName("createdAt")]
+        public DateTime CreatedAt { get; set; }
     }
 }

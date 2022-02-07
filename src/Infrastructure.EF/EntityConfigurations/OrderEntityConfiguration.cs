@@ -9,12 +9,10 @@ namespace Infrastructure.EF.EntityConfigurations
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.ToTable("Orders");
-
             builder.HasKey(x => x.Id);
-
             builder.Property(x => x.Id).HasColumnName("OrderId");
 
-            builder.HasIndex(x => x.ObjectNumber).IsUnique();
+            builder.Ignore(x => x.ObjectNumber);
         }
     }
 }

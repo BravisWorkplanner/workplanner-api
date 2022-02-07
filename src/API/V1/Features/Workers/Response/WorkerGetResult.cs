@@ -10,8 +10,8 @@ namespace API.V1.Features.Workers.Response
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [JsonPropertyName("email")]
-        public string Email { get; set; }
+        [JsonPropertyName("company")]
+        public string Company { get; set; }
 
         [JsonPropertyName("phoneNumber")]
         public string PhoneNumber { get; set; }
