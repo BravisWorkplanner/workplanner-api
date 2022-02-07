@@ -1,8 +1,9 @@
 ﻿using APIEndpoints;
 using Domain;
-using Domain.Contracts;
 using Domain.Entities;
+using Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
@@ -13,23 +14,27 @@ namespace API.V1.Features.Orders
 {
     public class Delete : BaseAsyncEndpoint.WithRequest<int>.WithResponse<int>
     {
-        private readonly IAsyncRepository<Order> _repository;
         private readonly ILogger _logger;
+        private readonly AppDbContext _db;
 
-        public Delete(IAsyncRepository<Order> repository, ILoggerFactory loggerFactory)
+        public Delete(AppDbContext db, ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<Delete>();
-            _repository = repository;
+            _db = db;
         }
 
         [HttpDelete("api/v1/orders/{id}", Name = "DeleteOrder")]
-        [SwaggerOperation(Summary = "Delete a new Order", Description = "Delete a new Order", OperationId = "Order.Delete", Tags = new[] {"Orders"})]
-        [ProducesResponseType(typeof(int), (int) HttpStatusCode.OK)]
-        public override async Task<ActionResult<int>> HandleAsync([FromRoute] int id, CancellationToken cancellationToken = default)
+        [SwaggerOperation(
+            Summary = "Delete a new Order",
+            Description = "Delete a new Order",
+            OperationId = "Order.Delete",
+            Tags = new[] { "Orders" })]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        public override async Task<ActionResult<int>> HandleAsync(
+            [FromRoute] int id,
+            CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation(LogEvents.OrderGetEvent, "Getting order with id {OrderId}", id);
-
-            var order = await _repository.GetByIdAsync(id, cancellationToken);
+            var order = await _db.FindAsync<Order>(new object[] { id }, cancellationToken: cancellationToken);
             if (order == null)
             {
                 _logger.LogWarning(LogEvents.OrderNotFoundEvent, "Order with id {OrderId} was not found", id);
@@ -37,9 +42,8 @@ namespace API.V1.Features.Orders
                 return NotFound(id);
             }
 
-            _logger.LogInformation(LogEvents.OrderDeleteEvent, "Deleting order with id {OrderId}", id);
-
-            await _repository.DeleteAsync(order, cancellationToken);
+            _db.Entry(order).State = EntityState.Deleted;
+            await _db.SaveChangesAsync(cancellationToken);
 
             return Ok(id);
         }

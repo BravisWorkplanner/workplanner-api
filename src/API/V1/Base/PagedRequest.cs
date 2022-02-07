@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace API.V1.Base
 {
@@ -8,6 +9,6 @@ namespace API.V1.Base
         public int PerPage { get; set; } = 20;
 
         [JsonPropertyName("page")]
-        public int Page { get; set; } = 0;
+        public int Page { get; set; } = 1;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using Domain.Entities;
-using Domain.Enums;
 
 namespace API.V1.Features.Orders.Response
 {
@@ -10,7 +9,7 @@ namespace API.V1.Features.Orders.Response
         public int Id { get; set; }
 
         [JsonPropertyName("product")]
-        public Product Product { get; set; }
+        public string Product { get; set; }
 
         [JsonPropertyName("description")]
         public string Description { get; set; }
@@ -19,6 +18,6 @@ namespace API.V1.Features.Orders.Response
         public double Price { get; set; }
 
         [JsonPropertyName("worker")]
-        public Worker Worker { get; set; }
+        public string Worker { get; set; }
     }
 }

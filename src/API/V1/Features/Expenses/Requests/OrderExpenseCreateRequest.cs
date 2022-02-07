@@ -16,6 +16,12 @@ namespace API.V1.Features.Expenses.Requests
 
         [JsonPropertyName("description")]
         public string Description { get; set; }
+
+        [JsonPropertyName("productId")]
+        public int ProductId { get; set; }
+
+        [JsonPropertyName("invoiceId")]
+        public string InvoiceId { get; set; }
     }
 
     public class OrderExpenseCreateValidator : AbstractValidator<OrderExpenseCreateRequest>
@@ -25,6 +31,8 @@ namespace API.V1.Features.Expenses.Requests
             RuleFor(x => x.OrderId).NotEmpty().WithMessage("{PropertyName} can not be null");
             RuleFor(x => x.WorkerId).NotEmpty().WithMessage("{PropertyName} can not be null");
             RuleFor(x => x.Price).NotEmpty().WithMessage("{PropertyName} can not be null");
+            RuleFor(x => x.ProductId).NotEmpty().WithMessage("{PropertyName} can not be null");
+            RuleFor(x => x.Description).NotEmpty().WithMessage("{PropertyName} can not be null");
         }
     }
 }

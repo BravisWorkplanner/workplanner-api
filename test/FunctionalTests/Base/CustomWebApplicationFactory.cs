@@ -36,6 +36,7 @@ namespace FunctionalTests.Base
             }
 
             host.Start();
+
             return host;
         }
 

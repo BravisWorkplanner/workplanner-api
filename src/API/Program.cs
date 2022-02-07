@@ -16,17 +16,15 @@ namespace API
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var logger = services.GetRequiredService<ILogger<Program>>();
 
                 try
                 {
-                    var context = services.GetRequiredService<AppDbContext>();
-
-                    context.Database.EnsureCreated();
+                    logger.LogInformation("Attempting to seed database if empty");
                     SeedData.Initialize(services);
                 }
                 catch (Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred seeding the DB.");
                 }
             }
@@ -35,18 +33,6 @@ namespace API
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(
-                    webBuilder =>
-                    {
-                        webBuilder
-                            .UseStartup<Startup>()
-                            .ConfigureLogging(
-                                logging =>
-                                {
-                                    logging.ClearProviders();
-                                    logging.AddConsole();
-                                });
-                    });
+            Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

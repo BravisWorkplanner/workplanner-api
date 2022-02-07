@@ -28,7 +28,8 @@ namespace Domain
 
         // warning events
         public static EventId OrderNotFoundEvent = new EventId(2001, nameof(OrderNotFoundEvent));
-        public static EventId WorkerNotFoundEvent = new EventId(2001, nameof(WorkerNotFoundEvent));
+        public static EventId WorkerNotFoundEvent = new EventId(2002, nameof(WorkerNotFoundEvent));
+        public static EventId ProductNotFoundEvent = new EventId(2003, nameof(ProductNotFoundEvent));
 
         // error events
     }
