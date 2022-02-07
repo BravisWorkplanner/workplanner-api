@@ -59,7 +59,7 @@ namespace FunctionalTests.Orders
 
             // act
             var httpClient = _testFixture.Factory.CreateClient();
-            var response = await httpClient.GetAsync("api/v1/orders?perPage=1&page=0");
+            var response = await httpClient.GetAsync("api/v1/orders?perPage=1&page=1");
 
             // assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

@@ -33,46 +33,21 @@ namespace FunctionalTests.Orders
                 Description = Faker.Lorem.Sentence(),
                 CustomerName = Faker.Company.Name(),
             };
+
             var httpClient = _testFixture.Factory.CreateClient();
             var httpContent = new StringContent(JsonSerializer.Serialize(createdOrder), Encoding.UTF8, "application/json");
 
             // act
             var response = await httpClient.PostAsync("api/v1/orders", httpContent);
 
-            // assert
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task CreateOrder_Should_Provide_Location_Header_For_Getting_Created_Resource()
-        {
-            // arrange
-            var createdOrder = new OrderCreateRequest()
-            {
-                CustomerPhoneNumber = Faker.Phone.Number(),
-                Address = Faker.Address.StreetAddress(),
-                Description = Faker.Lorem.Sentence(),
-                CustomerName = Faker.Company.Name(),
-            };
-            var httpClient = _testFixture.Factory.CreateClient();
-            var httpContent = new StringContent(JsonSerializer.Serialize(createdOrder), Encoding.UTF8, "application/json");
-
-            // act
-            var response = await httpClient.PostAsync("api/v1/orders", httpContent);
+            var id = JsonSerializer.Deserialize<int>(await response.Content.ReadAsStreamAsync());
 
             // assert
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.NotNull(response.Headers.Location);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var order = await httpClient.GetAsync(response.Headers.Location);
-            var asd = await order.Content.ReadAsStringAsync();
-            var getOrder = JsonSerializer.Deserialize<OrderGetResult>(asd);
-            Assert.NotNull(getOrder);
+            var getResponse = await httpClient.GetAsync($"api/v1/orders/{id}");
 
-            Assert.Equal(getOrder.Address, createdOrder.Address);
-            Assert.Equal(getOrder.Description, createdOrder.Description);
-            Assert.Equal(getOrder.CustomerName, createdOrder.CustomerName);
-            Assert.Equal(getOrder.CustomerPhoneNumber, createdOrder.CustomerPhoneNumber);
+            Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
         }
 
         [Fact]

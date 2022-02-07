@@ -52,7 +52,14 @@ namespace UnitTests.ValidatorTests
         {
             // arrange
             var sut = new OrderExpenseCreateValidator();
-            var order = new OrderExpenseCreateRequest() { OrderId = 1, WorkerId = 2, Price = double.MaxValue };
+            var order = new OrderExpenseCreateRequest
+            {
+                OrderId = 1,
+                WorkerId = 2,
+                Price = double.MaxValue,
+                ProductId = 3,
+                Description = "Hello",
+            };
 
             // act
             var result = sut.Validate(order);

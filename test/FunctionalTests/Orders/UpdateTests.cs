@@ -81,10 +81,8 @@ namespace FunctionalTests.Orders
                 OrderId = id,
                 Address = Faker.Address.StreetAddress(),
                 Description = Faker.Lorem.Sentence(),
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(3),
-                InvoiceDate = DateTime.UtcNow.AddDays(5),
-                OrderStatus = (OrderStatus)new Random().Next(0, Enum.GetValues(typeof(OrderStatus)).Length - 1),
+                CustomerName = Faker.Company.Name(),
+                CustomerPhoneNumber = Faker.Phone.Number(),
             };
         }
     }
