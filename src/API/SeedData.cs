@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using Bogus;
 using Domain.Entities;
 using Domain.Enums;
@@ -14,13 +15,13 @@ namespace API
 {
     public static class SeedData
     {
-        public static void Initialize(IServiceProvider serviceProvider)
+        public static void Initialize(IServiceProvider serviceProvider, bool forceSeed = false)
         {
             using var dbContext = new AppDbContext(serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>());
-            SeedDatabase(dbContext, true);
+            SeedDatabase(dbContext, forceSeed);
         }
 
-        public static void SeedDatabase(AppDbContext dbContext, bool forceSeed = false)
+        public static void SeedDatabase(AppDbContext dbContext, bool forceSeed)
         {
             dbContext.Database.Migrate();
 
@@ -29,14 +30,29 @@ namespace API
             {
                 return;
             }
+            
+            ClearAllTables(dbContext);
+            SeedTables(dbContext);
+            dbContext.SaveChanges();
+        }
 
+        private static void ClearAllTables(AppDbContext db)
+        {
+            db.TimeRegistrations.Clear();
+            db.Expenses.Clear();
+            db.Products.Clear();
+            db.Orders.Clear();
+            db.Workers.Clear();
+            db.SaveChanges();
+        }
+
+        private static void SeedTables(AppDbContext dbContext)
+        {
             var orders = SeedOrderTable(dbContext);
             var workers = SeedWorkerTable(dbContext);
             var productIds = SeedProductTable(dbContext);
             SeedExpenseTable(dbContext, orders, workers, productIds);
             SeedTimeRegistrationTable(dbContext, orders, workers);
-
-            dbContext.SaveChanges();
         }
 
         private static bool CheckIfDatabaseIsAlreadySeeded(AppDbContext dbContext)
@@ -97,13 +113,19 @@ namespace API
 
         private static int[] SeedProductTable(AppDbContext dbContext)
         {
-            var products = new[] { "Machine", "Worker clothes", "Tools", "Material" }.Select(
-                    x => new Product
-                    {
-                        Description = x,
-                        Type = x,
-                    }).
-                ToArray();
+            var products = new[]
+                {
+                    (Type: "Machine", Description: "New or leased machines"),
+                    (Type: "Worker clothes", Description: "All clothing and accessories for workers"),
+                    (Type: "Tools", Description:"All tools that are not considered machines (i.e. hammer, screwdriver etc)"),
+                    (Type: "Material", Description:"All material (e.g. nails, paint, wood etc)"),
+                }.Select(
+                      x => new Product
+                      {
+                          Type = x.Type,
+                          Description = x.Description,
+                      }).
+                  ToArray();
 
             dbContext.Products.AddRange(products);
             dbContext.SaveChanges();

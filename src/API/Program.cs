@@ -1,6 +1,10 @@
 using System;
+using System.Linq;
+using System.Reflection;
+using Domain.Entities.Base;
 using Infrastructure.EF;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -20,8 +24,9 @@ namespace API
 
                 try
                 {
+                    var forceSeed = ParseCommandlineArgs(args, logger);
                     logger.LogInformation("Attempting to seed database if empty");
-                    SeedData.Initialize(services);
+                    SeedData.Initialize(services, forceSeed);
                 }
                 catch (Exception ex)
                 {
@@ -30,6 +35,17 @@ namespace API
             }
 
             host.Run();
+        }
+
+        private static bool ParseCommandlineArgs(string[] args, ILogger logger)
+        {
+            var forceSeed = false;
+            if (args.Length > 1 && bool.TryParse(args[1], out forceSeed))
+            {
+                logger.LogInformation("Force seed true. Will clear database and re-seed");
+            }
+
+            return forceSeed;
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
