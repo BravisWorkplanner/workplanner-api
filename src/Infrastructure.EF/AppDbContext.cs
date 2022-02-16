@@ -11,7 +11,8 @@ namespace Infrastructure.EF
     {
         private IDbContextTransaction _currentTransaction;
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options)
         {
         }
 
