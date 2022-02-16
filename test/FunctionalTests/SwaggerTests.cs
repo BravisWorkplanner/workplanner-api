@@ -1,9 +1,9 @@
-﻿using FunctionalTests.Base;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
+using FunctionalTests.Base;
 using Xunit;
 
-namespace FunctionalTests.Swagger
+namespace FunctionalTests
 {
     [Collection(nameof(TestFixture))]
     public class SwaggerTests

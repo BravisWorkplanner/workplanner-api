@@ -1,5 +1,4 @@
-﻿using API.V1.Features.Orders.Request;
-using APIEndpoints;
+﻿using APIEndpoints;
 using Domain;
 using Domain.Entities;
 using Infrastructure.EF;

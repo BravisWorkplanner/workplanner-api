@@ -1,6 +1,4 @@
-﻿using API.V1.Features.Orders.Request;
-using API.V1.Features.Orders.Response;
-using APIEndpoints;
+﻿using APIEndpoints;
 using Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using API.V1.Features.Expenses.Requests;
 using API.V1.Features.Products.Request;
 using API.V1.Features.Products.Response;
 

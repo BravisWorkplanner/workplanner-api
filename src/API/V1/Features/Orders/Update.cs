@@ -31,6 +31,7 @@ namespace API.V1.Features.Orders
             OperationId = "Order.Update",
             Tags = new[] { "Orders" })]
         [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public override async Task<ActionResult<int>> HandleAsync(
             [FromBody] OrderUpdateRequest request,
             CancellationToken cancellationToken = default)

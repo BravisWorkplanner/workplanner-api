@@ -7,10 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace FunctionalTests.Base
 {
@@ -30,7 +30,7 @@ namespace FunctionalTests.Base
         }
 
         public CustomWebApplicationFactory<Startup> Factory { get; }
-
+        
         public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
         {
             using var scope = _scopeFactory.CreateScope();
@@ -81,29 +81,28 @@ namespace FunctionalTests.Base
         public Task<T> ExecuteDbContextAsync<T>(Func<AppDbContext, Task<T>> action) =>
             ExecuteScopeAsync(sp => action(sp.GetService<AppDbContext>()));
 
-        private int _nextObjectNumber = 1;
-
-        public int NextCourseNumber() => Interlocked.Increment(ref _nextObjectNumber);
-
         public Order CreateTestOrder()
         {
-            var orderFaker = new Faker<Order>().RuleFor(x => x.ObjectNumber, _ => $"B-00{NextCourseNumber()}").
-                                                RuleFor(x => x.Address, f => f.Person.Address.Street).
-                                                RuleFor(x => x.Description, f => f.Lorem.Sentence(7)).
-                                                RuleFor(x => x.StartDate, f => f.Date.Soon(7)).
-                                                RuleFor(x => x.EndDate, f => f.Date.Soon(31)).
-                                                RuleFor(x => x.InvoiceDate, f => f.Date.Future(45)).
-                                                RuleFor(x => x.OrderStatus, f => (OrderStatus)f.Random.Int(0, 3));
+            var orderFaker = new Faker<Order>()
+                             .RuleFor(x => x.Address, f => f.Person.Address.Street)
+                             .RuleFor(x => x.Description, f => f.Lorem.Sentence(7))
+                             .RuleFor(x => x.StartDate, f => f.Date.Soon(7))
+                             .RuleFor(x => x.EndDate, f => f.Date.Soon(31))
+                             .RuleFor(x => x.InvoiceDate, f => f.Date.Future(45))
+                             .RuleFor(x => x.OrderStatus, f => (OrderStatus)f.Random.Int(0, 3));
 
-            var workerFaker = new Faker<Worker>().RuleFor(x => x.Name, f => f.Person.FullName).
-                                                  RuleFor(x => x.Company, f => f.Company.CompanyName()).
-                                                  RuleFor(x => x.PhoneNumber, f => f.Phone.PhoneNumber("####-######"));
+            var workerFaker = new Faker<Worker>()
+                              .RuleFor(x => x.Name, f => f.Person.FullName)
+                              .RuleFor(x => x.Company, f => f.Company.CompanyName())
+                              .RuleFor(x => x.PhoneNumber, f => f.Phone.PhoneNumber("####-######"));
 
-            var productFaker = new Faker<Product>().RuleFor(x => x.Type, f => f.Name.JobType()).
-                                                    RuleFor(x => x.Description, f => f.Name.JobType());
+            var productFaker = new Faker<Product>()
+                               .RuleFor(x => x.Type, f => f.Name.JobType())
+                               .RuleFor(x => x.Description, f => f.Name.JobType());
 
-            var expenseFaker = new Faker<Expense>().RuleFor(x => x.Description, f => f.Lorem.Sentence()).
-                                                    RuleFor(x => x.Price, f => Convert.ToDouble(f.Commerce.Price()));
+            var expenseFaker = new Faker<Expense>()
+                               .RuleFor(x => x.Description, f => f.Lorem.Sentence())
+                               .RuleFor(x => x.Price, f => Convert.ToDouble(f.Commerce.Price()));
 
             var timeRegistrationFaker = new Faker<TimeRegistration>().RuleFor(
                                                                           x => x.Week,
