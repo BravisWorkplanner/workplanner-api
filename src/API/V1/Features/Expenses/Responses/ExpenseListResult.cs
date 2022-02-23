@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using Domain.Entities;
 
 namespace API.V1.Features.Expenses.Responses
 {

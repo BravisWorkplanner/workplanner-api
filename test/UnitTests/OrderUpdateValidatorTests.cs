@@ -1,7 +1,7 @@
 ﻿using API.V1.Features.Orders.Request;
 using Xunit;
 
-namespace UnitTests.ValidatorTests
+namespace UnitTests
 {
     public class OrderUpdateValidatorTests
     {

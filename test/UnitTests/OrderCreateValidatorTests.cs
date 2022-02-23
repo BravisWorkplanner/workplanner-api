@@ -1,7 +1,8 @@
 ﻿using API.V1.Features.Orders.Request;
+using FluentValidation.TestHelper;
 using Xunit;
 
-namespace UnitTests.ValidatorTests
+namespace UnitTests
 {
     public class OrderCreateValidatorTests
     {
@@ -19,10 +20,13 @@ namespace UnitTests.ValidatorTests
             };
 
             // act
-            var result = sut.Validate(order);
+            var result = sut.TestValidate(order);
 
             // assert
-            Assert.True(result.IsValid);
+            result.ShouldNotHaveValidationErrorFor(o => o.Address);
+            result.ShouldNotHaveValidationErrorFor(o => o.Description);
+            result.ShouldNotHaveValidationErrorFor(o => o.CustomerPhoneNumber);
+            result.ShouldNotHaveValidationErrorFor(o => o.CustomerName);
         }
 
         [Fact]
@@ -33,10 +37,13 @@ namespace UnitTests.ValidatorTests
             var order = new OrderCreateRequest();
 
             // act
-            var result = sut.Validate(order);
+            var result = sut.TestValidate(order);
 
             // assert
-            Assert.False(result.IsValid);
+            result.ShouldHaveValidationErrorFor(o => o.Address);
+            result.ShouldHaveValidationErrorFor(o => o.Description);
+            result.ShouldHaveValidationErrorFor(o => o.CustomerPhoneNumber);
+            result.ShouldHaveValidationErrorFor(o => o.CustomerName);
         }
     }
 }

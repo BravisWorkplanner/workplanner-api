@@ -30,7 +30,7 @@ namespace API.V1.Features.Workers
             Description = "Update an Worker",
             OperationId = "Worker.Update",
             Tags = new[] { "Workers" })]
-        [ProducesResponseType(typeof(int), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public override async Task<ActionResult> HandleAsync(
@@ -57,7 +57,7 @@ namespace API.V1.Features.Workers
             _db.Entry(worker).State = EntityState.Modified;
             await _db.SaveChangesAsync(cancellationToken);
 
-            return NoContent();
+            return Ok(worker.Id);
         }
     }
 }
