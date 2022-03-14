@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Base;
+﻿using System;
+using Domain.Entities.Base;
 
 namespace Domain.Entities
 {
@@ -9,6 +10,8 @@ namespace Domain.Entities
         public double Price { get; set; }
 
         public string InvoiceId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
 
         public int OrderId { get; set; }
 

@@ -88,6 +88,7 @@ namespace FunctionalTests
             Assert.Equal(expense.ProductId, getExpense.ProductId);
             Assert.Equal(expense.OrderId, getExpense.OrderId);
             Assert.Equal(expense.Price, getExpense.Price);
+            Assert.NotEqual(default, getExpense.CreatedAt);
         }
 
         [Fact]
@@ -114,6 +115,7 @@ namespace FunctionalTests
                     WorkerId = worker.Id,
                     Description = Faker.Lorem.GetFirstWord(),
                     Price = 45.50,
+                    CreatedAt = DateTime.UtcNow,
                 };
 
                 db.Entry(expense).State = EntityState.Added;
@@ -149,6 +151,7 @@ namespace FunctionalTests
             Assert.Equal(expenseUpdateRequest.InvoiceId, getExpense.InvoiceId);
             Assert.Equal(expenseUpdateRequest.ProductId, getExpense.ProductId);
             Assert.Equal(expenseUpdateRequest.Price, getExpense.Price);
+            Assert.NotEqual(default, expense.CreatedAt);
         }
 
         [Fact]

@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+
 using Bogus;
+
 using Domain.Entities;
 using Domain.Enums;
+
 using Infrastructure.EF;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,7 +32,7 @@ namespace API
             {
                 return;
             }
-            
+
             ClearAllTables(dbContext);
             SeedTables(dbContext);
             dbContext.SaveChanges();
@@ -137,8 +141,10 @@ namespace API
             IReadOnlyCollection<Worker> workers,
             int[] productIds)
         {
-            var fakeExpense = new Faker<Expense>().RuleFor(x => x.Description, f => f.Lorem.Sentence()).
-                                                   RuleFor(x => x.Price, f => double.Parse(f.Commerce.Price()));
+            var fakeExpense = new Faker<Expense>()
+                              .RuleFor(x => x.Description, f => f.Lorem.Sentence())
+                              .RuleFor(x => x.CreatedAt, f => f.Date.Between(DateTime.Now, DateTime.Now.AddMonths(2)))
+                              .RuleFor(x => x.Price, f => double.Parse(f.Commerce.Price()));
 
             var rand = new Random();
             for (var i = 0; i < orders.Count; i++)
