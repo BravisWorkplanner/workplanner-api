@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,6 +41,7 @@ namespace API.V1.Features.Expenses
                 Description = request.Description,
                 ProductId = request.ProductId,
                 InvoiceId = request.InvoiceId,
+                CreatedAt = DateTime.UtcNow,
             };
 
             _db.Entry(expense).State = EntityState.Added;
